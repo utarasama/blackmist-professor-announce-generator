@@ -30,9 +30,12 @@ def get_planning_from_dataframe(data: DataFrame, columns: tuple[str]) -> str:
     reduced_data = data.iloc[:, [index_first_col, index_col_to_check]]
     for course_line in range(4, 21, 4):
         if reduced_data.iloc[course_line, 1] != "COURS":
-            courses += f"- {str(reduced_data.iloc[course_line, 0]).replace('\n', " ")}" + '\n' \
-                    f'{reduced_data.iloc[course_line, 1]} | Pr. {reduced_data.iloc[course_line + 2, 1]}' + '\n' \
-                    f'{reduced_data.iloc[course_line + 1, 1]} - {reduced_data.iloc[course_line + 3, 1]} | Obligatoire' + '\n\n'
+            courses += f"- {str(reduced_data.iloc[course_line, 0]).replace('\n', " ")}"
+            courses += '\n'
+            courses += f'{reduced_data.iloc[course_line, 1]} | Pr. {reduced_data.iloc[course_line + 2, 1]}'
+            courses += '\n'
+            courses += f'{reduced_data.iloc[course_line + 1, 1]} - {reduced_data.iloc[course_line + 3, 1]} | Obligatoire'
+            courses += '\n\n'
     return courses
 
 @app.get("/blackmist/get_courses_announce",
@@ -49,11 +52,15 @@ def get_prof_announce(trimestre: TrimestreEnum):
         2: ("Unnamed: 9", "Unnamed: 16"),
         3: ("Unnamed: 19", "Unnamed: 26")
     }
-    complete_announce: str = f'# 📅 Cours du {datetime.now().strftime("%d/%m")}' + '\n'
+    complete_announce: str = f'# 📅 Cours du {datetime.now().strftime("%d/%m")}'
+    complete_announce += '\n'
     for year, planning_url in planning_urls.items():
         data = pd.read_csv(planning_url)
         planning: str = get_planning_from_dataframe(data, columns_per_trimestre[trimestre.value])
-        complete_announce += f'## {year}'+ '\n' + planning + '\n'
+        complete_announce += f'## {year}'
+        complete_announce += '\n'
+        complete_announce += planning
+        complete_announce += '\n'
     return {"announce": complete_announce}
 
 
