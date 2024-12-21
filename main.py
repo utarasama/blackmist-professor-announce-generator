@@ -30,7 +30,8 @@ def get_planning_from_dataframe(data: DataFrame, columns: tuple[str]) -> str:
     reduced_data = data.iloc[:, [index_first_col, index_col_to_check]]
     for course_line in range(4, 21, 4):
         if reduced_data.iloc[course_line, 1] != "COURS":
-            courses += f"- {str(reduced_data.iloc[course_line, 0]).replace('\n', " ")}"
+            horaire: str = str(reduced_data.iloc[course_line, 0]).replace('\n', " ")
+            courses += f"- {horaire}"
             courses += '\n'
             courses += f'{reduced_data.iloc[course_line, 1]} | Pr. {reduced_data.iloc[course_line + 2, 1]}'
             courses += '\n'
