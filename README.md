@@ -15,7 +15,11 @@ pip install -r requirements.txt
 
 Comme tout bon script Python, il faut ouvrir un terminal, évidemment dans le bon dossier, puis exécuter la commande suivante.
 ```
-python main.py
+fastapi dev main.py
+```
+En revanche, si vous voulez exécuter le script dans un environnement de production, optez plutôt pour celle-ci. 
+```
+fastapi run main.py
 ```
 
 ## Fonctionnement du script
@@ -23,11 +27,8 @@ python main.py
 Par souci de finances, le script ne se base pas sur l'API Google mais une fonctionnalité de Google Sheet qui permet de partager le classeur sous divers formats, dont le CSV. 
 Chaque feuille du classeur peut être convertie en un fichier CSV accessible via une URL et dont le contenu se met automatiquement à jour en fonction des modifications apportées au classeur. Bien pratique !
 
-> [!NOTE]
-> Le script se base sur le jour courant lors qu'il est exécuté. Si on est samedi, il prendra la colonne SAMEDI.
-
-Le script commence par lister toutes les feuilles sur lesquelles travailler, chacune correspondant à une année de l'université. Un travail d'analyse des CSV m'a permis de déterminer quelles sont les colonnes qui étaient les plus intéressantes. Ensuite, pour chaque feuille, le programme va regarder s'il y a un cours de renseigné. Il se base uniquement sur le fait qu'une matière soit renseignée.
-Puis, s'il trouve un cours, il se contente simplement d'extraire les données puis de les mettre en forme dans une variable textuelle, pour finalement l'afficher dans la console et même en copier le contenu dans le presse-papier.
+Le script commence par lister toutes les feuilles sur lesquelles travailler, chacune correspondant à une année de l'université. Un travail d'analyse des CSV m'a permit de déterminer quelles sont les colonnes qui étaient les plus intéressantes. Ensuite, pour chaque feuille, le programme va regarder s'il y a un cours de renseigné. Il se base uniquement sur le fait qu'une matière soit renseignée.
+Puis, s'il trouve un cours, il se contente simplement d'extraire les données puis de les mettre en forme dans une variable textuelle, pour finalement renvoyer une réponse API sous la forme d'un objet JSON.
 
 > [!IMPORTANT]
 > Le script n'est pas parfait. Un survol du texte généré est primordial pour vérifier que tout soit en ordre avant de balancer l'annonce sur le serveur Discord Black Mist.
