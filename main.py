@@ -35,7 +35,7 @@ def get_planning_from_dataframe(data: DataFrame, columns: tuple[str]) -> str:
                     f"\n{reduced_data.iloc[course_line + 1, 1]} - {reduced_data.iloc[course_line + 3, 1]} | Obligatoire\n\n"
     return courses
 
-@app.get("/get_courses_announce",
+@app.get("/blackmist/get_courses_announce",
          summary="Générer l'annonce des cours",
          tags=["Black Mist RP"],
          response_description="Un texte en Markdown prêt à être envoyé sur Discord")
