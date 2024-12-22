@@ -15,11 +15,11 @@ pip install -r requirements.txt
 
 Comme tout bon script Python, il faut ouvrir un terminal, évidemment dans le bon dossier, puis exécuter la commande suivante.
 ```
-fastapi dev main.py
+fastapi dev api/main.py
 ```
 En revanche, si vous voulez exécuter le script dans un environnement de production, optez plutôt pour celle-ci. 
 ```
-fastapi run main.py
+fastapi run api/main.py
 ```
 
 ## Fonctionnement du script
