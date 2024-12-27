@@ -24,9 +24,12 @@ class JourEnum(str, Enum):
 app = FastAPI()
 
 
-def get_planning_from_dataframe(data: DataFrame, columns: tuple[str], jour: JourEnum) -> str:
+def get_planning_from_dataframe(data: DataFrame, columns: tuple[str], jour: JourEnum, trimestre) -> str:
     # Récupération de la date du jour
     courses: str = ""
+    présence: str = "Obligatoire"
+    if trimestre == 3:
+        présence = "Rattrapage"
 
     index_col_to_check: int = None
     index_first_col: int = data.columns.get_loc(columns[0])
@@ -42,8 +45,8 @@ def get_planning_from_dataframe(data: DataFrame, columns: tuple[str], jour: Jour
             courses += '\n'
             courses += f'{reduced_data.iloc[course_line, 1]} | Pr. {reduced_data.iloc[course_line + 2, 1]}'
             courses += '\n'
-            courses += f'{reduced_data.iloc[course_line + 1, 1]} - {reduced_data.iloc[course_line + 3, 1]} | Obligatoire'
-            courses += '\n\n'
+            courses += f'{reduced_data.iloc[course_line + 1, 1]} - {reduced_data.iloc[course_line + 3, 1]} | {présence}'
+            courses += '\n'
     return courses
 
 @app.get("/blackmist/get_courses_announce",
@@ -65,13 +68,8 @@ def get_prof_announce(trimestre: TrimestreEnum, jour: JourEnum):
     complete_announce += '\n'
     for year, planning_url in planning_urls.items():
         data = pd.read_csv(planning_url)
-        planning: str = get_planning_from_dataframe(data, columns_per_trimestre[trimestre.value], jour)
+        planning: str = get_planning_from_dataframe(data, columns_per_trimestre[trimestre.value], jour, trimestre.value)
         complete_announce += f'## {year}'
         complete_announce += '\n'
         complete_announce += planning
-        complete_announce += '\n'
     return {"announce": complete_announce}
-
-
-if __name__ == "__main__":
-    get_prof_announce()
