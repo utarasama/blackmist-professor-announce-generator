@@ -24,7 +24,7 @@ class JourEnum(str, Enum):
 app = FastAPI()
 
 
-def get_planning_from_dataframe(data: DataFrame, columns: tuple[str], jour: JourEnum, trimestre) -> str:
+def get_planning_from_dataframe(data: DataFrame, columns: tuple[str], jour: str, trimestre) -> str:
     # Récupération de la date du jour
     courses: str = ""
     présence: str = "Obligatoire"
@@ -34,7 +34,7 @@ def get_planning_from_dataframe(data: DataFrame, columns: tuple[str], jour: Jour
     index_col_to_check: int = None
     index_first_col: int = data.columns.get_loc(columns[0])
     for col_index in range(index_first_col + 1, index_first_col + 9):
-        if str(data.iloc[2, col_index]).lower() == jour.value.lower():
+        if str(data.iloc[2, col_index]).lower() == jour.lower():
             index_col_to_check = col_index
             break
     reduced_data = data.iloc[:, [index_first_col, index_col_to_check]]
@@ -79,3 +79,7 @@ def get_prof_announce(trimestre: TrimestreEnum, jour: str):
         complete_announce += '\n'
         complete_announce += planning
     return {"announce": complete_announce}
+
+
+if __name__ == "__main__":
+    print(get_prof_announce(TrimestreEnum.trimestre1, "samedi"))
