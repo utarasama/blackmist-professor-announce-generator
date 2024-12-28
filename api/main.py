@@ -1,7 +1,7 @@
 import pandas as pd
 from pandas import DataFrame
 from datetime import datetime
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from enum import Enum
 
 
@@ -34,7 +34,7 @@ def get_planning_from_dataframe(data: DataFrame, columns: tuple[str], jour: Jour
     index_col_to_check: int = None
     index_first_col: int = data.columns.get_loc(columns[0])
     for col_index in range(index_first_col + 1, index_first_col + 9):
-        if data.iloc[2, col_index] == jour.value:
+        if str(data.iloc[2, col_index]).lower() == jour.value.lower():
             index_col_to_check = col_index
             break
     reduced_data = data.iloc[:, [index_first_col, index_col_to_check]]
@@ -45,7 +45,10 @@ def get_planning_from_dataframe(data: DataFrame, columns: tuple[str], jour: Jour
             courses += '\n'
             courses += f'{reduced_data.iloc[course_line, 1]} | Pr. {reduced_data.iloc[course_line + 2, 1]}'
             courses += '\n'
-            courses += f'{reduced_data.iloc[course_line + 1, 1]} - {reduced_data.iloc[course_line + 3, 1]} | {présence}'
+            salle = reduced_data.iloc[course_line + 3, 1]
+            if salle != salle: # Les NaN sont différents de toutes les valeurs, y compris eux-mêmes
+                salle = 'Salle à déterminer'
+            courses += f'{reduced_data.iloc[course_line + 1, 1]} - {salle} | {présence}'
             courses += '\n'
     return courses
 
@@ -53,7 +56,10 @@ def get_planning_from_dataframe(data: DataFrame, columns: tuple[str], jour: Jour
          summary="Générer l'annonce des cours",
          tags=["Black Mist RP"],
          response_description="Un texte en Markdown prêt à être envoyé sur Discord")
-def get_prof_announce(trimestre: TrimestreEnum, jour: JourEnum):
+def get_prof_announce(trimestre: TrimestreEnum, jour: str):
+    jours_de_cours: list[str] = ['lundi', 'mardi', 'mercredi', 'jeudi', 'samedi']
+    if jour.lower() not in jours_de_cours:
+        raise HTTPException(status_code=422, detail='Le jour de la semaine entré est incorrect.')
     planning_urls: dict[str, str] = { 
         "1e année": "https://docs.google.com/spreadsheets/d/e/2PACX-1vSj_SKPhUacbANqBmPyJp2f9Rq7J7vtqzx5vvVfKOkTl3IUbBjBrrucgiktiFu1pLoudDPG4PwqsR-j/pub?output=csv",
         "2e année": "https://docs.google.com/spreadsheets/d/e/2PACX-1vSj_SKPhUacbANqBmPyJp2f9Rq7J7vtqzx5vvVfKOkTl3IUbBjBrrucgiktiFu1pLoudDPG4PwqsR-j/pub?gid=2135775316&single=true&output=csv",
