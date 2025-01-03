@@ -78,6 +78,7 @@ def get_prof_announce(trimestre: TrimestreEnum, jour: str):
         complete_announce += f'## {year}'
         complete_announce += '\n'
         complete_announce += planning
+    complete_announce += '|| <@&1278414481785098340> ||'
     return {"announce": complete_announce}
 
 
