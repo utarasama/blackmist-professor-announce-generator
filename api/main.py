@@ -3,6 +3,8 @@ from pandas import DataFrame
 from datetime import datetime
 from fastapi import FastAPI, HTTPException
 from enum import Enum
+from dotenv import load_dotenv
+from os import getenv
 
 
 class TrimestreEnum(int, Enum):
@@ -22,6 +24,8 @@ class JourEnum(str, Enum):
 
 
 app = FastAPI()
+load_dotenv()
+MAINTENANCE = getenv("MAINTENANCE")
 
 
 def get_planning_from_dataframe(data: DataFrame, columns: tuple[str], jour: str, trimestre) -> str:
@@ -57,6 +61,8 @@ def get_planning_from_dataframe(data: DataFrame, columns: tuple[str], jour: str,
          tags=["Black Mist RP"],
          response_description="Un texte en Markdown prêt à être envoyé sur Discord")
 def get_prof_announce(trimestre: TrimestreEnum, jour: str):
+    if MAINTENANCE:
+        raise HTTPException(status_code=503, detail="Désolé l'équipe mais flemme de me réorganiser pour le moment.")
     jours_de_cours: list[str] = ['lundi', 'mardi', 'mercredi', 'jeudi', 'samedi']
     if jour.lower() not in jours_de_cours:
         raise HTTPException(status_code=422, detail='Le jour de la semaine entré est incorrect.')
@@ -81,6 +87,7 @@ def get_prof_announce(trimestre: TrimestreEnum, jour: str):
     complete_announce += '|| <@&1278414481785098340> ||'
     return {"announce": complete_announce}
 
-
+"""
 if __name__ == "__main__":
     print(get_prof_announce(TrimestreEnum.trimestre1, "samedi"))
+"""
