@@ -64,7 +64,7 @@ def get_planning_from_dataframe(data: DataFrame, columns: tuple[str], jour: str,
          tags=["Black Mist RP"],
          response_description="Un texte en Markdown prêt à être envoyé sur Discord")
 def get_prof_announce(trimestre: TrimestreEnum, jour: str):
-    if MAINTENANCE:
+    if MAINTENANCE == "true":
         raise HTTPException(status_code=503, detail="Désolé l'équipe mais flemme de me réorganiser pour le moment.")
     jours_de_cours: list[str] = ['lundi', 'mardi', 'mercredi', 'jeudi', 'samedi']
     if jour.lower() not in jours_de_cours:
