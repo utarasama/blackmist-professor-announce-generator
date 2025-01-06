@@ -51,8 +51,11 @@ def get_planning_from_dataframe(data: DataFrame, columns: tuple[str], jour: str,
             courses += '\n'
             salle = reduced_data.iloc[course_line + 3, 1]
             if salle != salle: # Les NaN sont différents de toutes les valeurs, y compris eux-mêmes
-                salle = 'Salle à déterminer'
-            courses += f'{reduced_data.iloc[course_line + 1, 1]} - {salle} | {présence}'
+                salle = ''
+            courses += reduced_data.iloc[course_line + 1, 1]
+            if salle != '':
+                courses += f' - {salle}'
+            courses += f' | {présence}'
             courses += '\n'
     return courses
 
@@ -89,5 +92,5 @@ def get_prof_announce(trimestre: TrimestreEnum, jour: str):
 
 """
 if __name__ == "__main__":
-    print(get_prof_announce(TrimestreEnum.trimestre1, "samedi"))
+    print(get_prof_announce(TrimestreEnum.trimestre2, "lundi"))
 """
