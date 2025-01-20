@@ -63,14 +63,14 @@ def get_planning_from_dataframe(data: DataFrame, columns: tuple[str], jour: str,
          summary="Générer l'annonce des cours",
          tags=["Black Mist RP"],
          response_description="Un texte en Markdown prêt à être envoyé sur Discord")
-def get_prof_announce(trimestre: TrimestreEnum, jour: str):
+def get_prof_announce(trimestre: int, jour: str):
     if MAINTENANCE == "true":
         raise HTTPException(status_code=503, detail="Désolé l'équipe mais flemme de me réorganiser pour le moment.")
     jours_de_cours: list[str] = ['lundi', 'mardi', 'mercredi', 'jeudi', 'samedi']
     if jour.lower() not in jours_de_cours:
         raise HTTPException(status_code=422, detail='Le jour de la semaine entré est incorrect.')
     planning_urls: dict[str, str] = { 
-        "1e année": "https://docs.google.com/spreadsheets/d/e/2PACX-1vSj_SKPhUacbANqBmPyJp2f9Rq7J7vtqzx5vvVfKOkTl3IUbBjBrrucgiktiFu1pLoudDPG4PwqsR-j/pub?output=csv",
+        "1e année": "https://docs.google.com/spreadsheets/d/e/2PACX-1vSj_SKPhUacbANqBmPyJp2f9Rq7J7vtqzx5vvVfKOkTl3IUbBjBrrucgiktiFu1pLoudDPG4PwqsR-j/pub?gid=1894291823&single=true&output=csv",
         "2e année": "https://docs.google.com/spreadsheets/d/e/2PACX-1vSj_SKPhUacbANqBmPyJp2f9Rq7J7vtqzx5vvVfKOkTl3IUbBjBrrucgiktiFu1pLoudDPG4PwqsR-j/pub?gid=2135775316&single=true&output=csv",
         "3e année": "https://docs.google.com/spreadsheets/d/e/2PACX-1vSj_SKPhUacbANqBmPyJp2f9Rq7J7vtqzx5vvVfKOkTl3IUbBjBrrucgiktiFu1pLoudDPG4PwqsR-j/pub?gid=1753681858&single=true&output=csv",
         "4e année": "https://docs.google.com/spreadsheets/d/e/2PACX-1vSj_SKPhUacbANqBmPyJp2f9Rq7J7vtqzx5vvVfKOkTl3IUbBjBrrucgiktiFu1pLoudDPG4PwqsR-j/pub?gid=1231779423&single=true&output=csv",
@@ -84,14 +84,20 @@ def get_prof_announce(trimestre: TrimestreEnum, jour: str):
     complete_announce += '\n'
     for year, planning_url in planning_urls.items():
         data = pd.read_csv(planning_url)
-        planning: str = get_planning_from_dataframe(data, columns_per_trimestre[trimestre.value], jour, trimestre.value)
+        ## Fix d'un bug dont j'ignore la nature qui change le nom de la 1e colonne du CSV de 2e année
+        if year == "2e année":
+            columns_per_trimestre[1] = ('v', 'Unnamed: 7')
+        else:
+            columns_per_trimestre[1] = ('Unnamed: 0', 'Unnamed: 7')
+        planning: str = get_planning_from_dataframe(data, columns_per_trimestre[trimestre], jour, trimestre)
         complete_announce += f'## {year}'
         complete_announce += '\n'
         complete_announce += planning
     complete_announce += '|| <@&1278414481785098340> ||'
     return {"announce": complete_announce}
 
+
 """
 if __name__ == "__main__":
-    print(get_prof_announce(TrimestreEnum.trimestre2, "lundi"))
+    print(get_prof_announce(trimestre=1, jour="lundi"))
 """
