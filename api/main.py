@@ -34,6 +34,8 @@ def get_planning_from_dataframe(data: DataFrame, columns: tuple[str], jour: str,
     présence: str = "Obligatoire"
     if trimestre == 3:
         présence = "Rattrapage"
+    elif jour.lower() == 'samedi':
+        présence == 'Optionnel'
 
     index_col_to_check: int = None
     index_first_col: int = data.columns.get_loc(columns[0])
