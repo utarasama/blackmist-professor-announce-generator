@@ -34,6 +34,8 @@ def get_planning_from_dataframe(data: DataFrame, columns: tuple[str], jour: str,
     présence: str = "Obligatoire"
     if trimestre == 3:
         présence = "Rattrapage"
+    elif jour.lower() == 'samedi':
+        présence = 'Optionnel'
 
     index_col_to_check: int = None
     index_first_col: int = data.columns.get_loc(columns[0])
@@ -97,7 +99,7 @@ def get_prof_announce(trimestre: int, jour: str):
     return {"announce": complete_announce}
 
 
-"""
+
 if __name__ == "__main__":
-    print(get_prof_announce(trimestre=1, jour="lundi"))
-"""
+    print(get_prof_announce(trimestre=1, jour="samedi"))
+
