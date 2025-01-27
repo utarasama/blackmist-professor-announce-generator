@@ -7,22 +7,6 @@ from dotenv import load_dotenv
 from os import getenv
 
 
-class TrimestreEnum(int, Enum):
-    trimestre1 = 1
-    trimestre2 = 2
-    trimestre3 = 3
-
-
-class JourEnum(str, Enum):
-    MONDAY = "LUNDI"
-    TUESDAY = "MARDI"
-    WEDNESDAY = "MERCREDI"
-    THURSDAY = "JEUDI"
-    #FRIDAY = "VENDREDI"
-    SATURDAY = "SAMEDI"
-    #SUNDAY = "DIMANCHE"
-
-
 app = FastAPI()
 load_dotenv()
 MAINTENANCE = getenv("MAINTENANCE")
@@ -68,7 +52,7 @@ def get_planning_from_dataframe(data: DataFrame, columns: tuple[str], jour: str,
 def get_prof_announce(trimestre: int, jour: str):
     if MAINTENANCE == "true":
         raise HTTPException(status_code=503, detail="Désolé l'équipe mais flemme de me réorganiser pour le moment.")
-    jours_de_cours: list[str] = ['lundi', 'mardi', 'mercredi', 'jeudi', 'samedi']
+    jours_de_cours: list[str] = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi']
     if jour.lower() not in jours_de_cours:
         raise HTTPException(status_code=422, detail='Le jour de la semaine entré est incorrect.')
     planning_urls: dict[str, str] = { 
@@ -99,7 +83,7 @@ def get_prof_announce(trimestre: int, jour: str):
     return {"announce": complete_announce}
 
 
-
+"""
 if __name__ == "__main__":
-    print(get_prof_announce(trimestre=1, jour="samedi"))
-
+    print(get_prof_announce(trimestre=1, jour="vendredi"))
+"""
